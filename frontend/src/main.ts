@@ -11,10 +11,10 @@
 
 import { createApp } from 'vue';
 import Root from '@/App.vue';
-/* eslint-disable no-restricted-imports */
+// eslint-disable-next-line no-restricted-imports
 import { createRemote, i18n, router, vuetify } from '@/plugins';
+// eslint-disable-next-line no-restricted-imports
 import { hideDirective } from '@/plugins/directives';
-/* eslint-enable no-restricted-imports */
 
 /**
  * - GLOBAL STYLES -

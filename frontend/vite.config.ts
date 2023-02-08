@@ -1,7 +1,7 @@
-/* eslint-disable import/no-nodejs-modules */
+// eslint-disable-next-line import/no-nodejs-modules
 import path, { dirname, resolve } from 'node:path';
+// eslint-disable-next-line import/no-nodejs-modules
 import { fileURLToPath } from 'node:url';
-/* eslint-enable import/no-nodejs-modules */
 import { defineConfig, UserConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import Pages from 'vite-plugin-pages';
