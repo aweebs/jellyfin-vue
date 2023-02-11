@@ -372,7 +372,11 @@ export function getImageInfo(
     itemId = item.Id;
   }
 
-  const url_string = remote.sdk.api?.getItemImageUrl(itemId as string, imgType);
+  if (!itemId) {
+    throw new Error('expected itemId to have been set');
+  }
+
+  const url_string = remote.sdk.api?.getItemImageUrl(itemId, imgType);
 
   if (imgTag && imgType && itemId && url_string) {
     url = new URL(url_string);
