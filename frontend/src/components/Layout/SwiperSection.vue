@@ -44,7 +44,6 @@
 </template>
 
 <script setup lang="ts">
-import { Swiper, SwiperSlide } from 'swiper/vue';
 /**
  * Virtual mode is not enabled as it worsens performance in this situation
  * There are not many slides in SwiperSection, so this should be fine
