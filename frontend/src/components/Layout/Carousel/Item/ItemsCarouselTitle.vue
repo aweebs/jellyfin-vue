@@ -31,96 +31,79 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import { computed, ref, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { BaseItemDto } from '@jellyfin/sdk/lib/generated-client';
 import { getLogo, ImageUrlInfo } from '@/utils/images';
 import { getItemDetailsLink } from '@/utils/items';
 
-export default defineComponent({
-  props: {
-    item: {
-      type: Object as () => BaseItemDto,
-      required: true
-    }
-  },
-  data() {
-    return {
-      itemLink: '',
-      titleString: '',
-      logoLink: '',
-      subtitle: ''
-    };
-  },
-  computed: {
-    logo(): ImageUrlInfo {
-      return getLogo(this.item);
-    }
-  },
-  watch: {
-    item: {
-      immediate: true,
-      handler(): void {
-        switch (this.item.Type) {
-          case 'MusicAlbum': {
-            if (this.item.AlbumArtists?.length) {
-              this.logoLink = getItemDetailsLink(
-                this.item.AlbumArtists[0],
-                'MusicArtist'
-              );
-            }
+const props = defineProps<{ item: BaseItemDto }>();
 
-            if (this.item.AlbumArtist) {
-              this.titleString = this.item.AlbumArtist;
-            }
+const { t } = useI18n();
 
-            if (this.item.Name) {
-              this.subtitle = this.item.Name;
-            }
+const itemLink = ref('');
+const titleString = ref('');
+const logoLink = ref('');
+const subtitle = ref('');
 
-            break;
-          }
-          case 'Episode': {
-            if (this.item.SeriesId) {
-              this.logoLink = getItemDetailsLink(
-                { Id: this.item.SeriesId },
-                'Series'
-              );
-            }
+const logo = computed(() => getLogo(props.item));
 
-            if (
-              this.item.SeasonName &&
-              this.item.IndexNumber &&
-              this.item.Name
-            ) {
-              const episodeString = this.$t('episodeNumber', {
-                episodeNumber: this.item.IndexNumber
-              });
-
-              this.subtitle = `${this.item.SeasonName} - ${episodeString}\n${this.item.Name}`;
-            }
-
-            if (this.item.SeriesName) {
-              this.titleString = this.item.SeriesName;
-            }
-
-            break;
-          }
+watch(
+  () => props.item,
+  (item) => {
+    switch (item.Type) {
+      case 'MusicAlbum': {
+        if (item.AlbumArtists?.length) {
+          logoLink.value = getItemDetailsLink(
+            item.AlbumArtists[0],
+            'MusicArtist'
+          );
         }
 
-        /**
-         * Instead of using 'default', we need this additional extra check
-         * in case an Album doesn't have artists, for example.
-         */
-        if (this.itemLink === '') {
-          this.itemLink = getItemDetailsLink(this.item);
+        if (item.AlbumArtist) {
+          titleString.value = item.AlbumArtist;
         }
 
-        if (this.titleString === '' && this.item.Name) {
-          this.titleString = this.item.Name;
+        if (item.Name) {
+          subtitle.value = item.Name;
         }
+
+        break;
+      }
+      case 'Episode': {
+        if (item.SeriesId) {
+          logoLink.value = getItemDetailsLink({ Id: item.SeriesId }, 'Series');
+        }
+
+        if (item.SeasonName && item.IndexNumber && item.Name) {
+          const episodeString = t('episodeNumber', {
+            episodeNumber: item.IndexNumber
+          });
+
+          subtitle.value = `${item.SeasonName} - ${episodeString}\n${item.Name}`;
+        }
+
+        if (item.SeriesName) {
+          titleString.value = item.SeriesName;
+        }
+
+        break;
       }
     }
-  }
-});
+
+    /**
+     * Instead of using 'default', we need this additional extra check
+     * in case an Album doesn't have artists, for example.
+     */
+    if (itemLink.value === '') {
+      itemLink.value = getItemDetailsLink(item);
+    }
+
+    if (titleString.value === '' && item.Name) {
+      titleString.value = item.Name;
+    }
+  },
+  { immediate: true }
+);
 </script>
