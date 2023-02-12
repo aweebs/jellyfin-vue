@@ -93,9 +93,9 @@ export default defineComponent({
   unmounted() {
     const animEndFunction = this.onAnimationEnd;
 
-    this.bars.forEach((element: HTMLElement) => {
+    for (const element of this.bars) {
       element.removeEventListener('animationend', animEndFunction);
-    });
+    }
   },
   methods: {
     updateBars(): void {
@@ -109,24 +109,20 @@ export default defineComponent({
         activeBar.addEventListener('animationend', animEndFunction);
       }
 
-      if (previousBars) {
-        window.requestAnimationFrame(() => {
-          previousBars.forEach((element: HTMLElement) => {
-            element.classList.remove('active', 'paused');
-            element.removeEventListener('animationend', animEndFunction);
-            element.classList.add('passed');
-          });
-        });
-      }
+      window.requestAnimationFrame(() => {
+        for (const element of previousBars) {
+          element.classList.remove('active', 'paused');
+          element.removeEventListener('animationend', animEndFunction);
+          element.classList.add('passed');
+        }
+      });
 
-      if (followingBars) {
-        window.requestAnimationFrame(() => {
-          followingBars.forEach((element: HTMLElement) => {
-            element.classList.remove('active', 'passed', 'paused');
-            element.removeEventListener('animationend', animEndFunction);
-          });
-        });
-      }
+      window.requestAnimationFrame(() => {
+        for (const element of followingBars) {
+          element.classList.remove('active', 'passed', 'paused');
+          element.removeEventListener('animationend', animEndFunction);
+        }
+      });
     },
     onAnimationEnd(): void {
       this.$emit('on-animation-end');
@@ -144,9 +140,9 @@ export default defineComponent({
     setAnimationDuration(): void {
       const newDuration = (this.duration / 1000).toString() + 's';
 
-      this.bars.forEach((element: HTMLElement) => {
+      for (const element of this.bars) {
         element.style.animationDuration = newDuration;
-      });
+      }
     }
   }
 });
