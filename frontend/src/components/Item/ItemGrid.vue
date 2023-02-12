@@ -38,16 +38,11 @@
 import { BaseItemDto } from '@jellyfin/sdk/lib/generated-client';
 import { useResponsiveClasses } from '@/composables';
 
-withDefaults(
-  defineProps<{
-    items?: BaseItemDto[];
-    loading?: boolean;
-    large?: boolean;
-  }>(),
-  {
-    items: () => []
-  }
-);
+defineProps<{
+  items: BaseItemDto[];
+  loading?: boolean;
+  large?: boolean;
+}>();
 </script>
 
 <style lang="scss" scoped>
