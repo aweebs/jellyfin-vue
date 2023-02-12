@@ -60,6 +60,11 @@
 import { defineComponent } from 'vue';
 import { BaseItemPerson, ImageType } from '@jellyfin/sdk/lib/generated-client';
 
+interface Data {
+  editState: BaseItemPerson;
+  options: { text: string; value: string }[];
+}
+
 export default defineComponent({
   props: {
     person: {
@@ -78,9 +83,9 @@ export default defineComponent({
   setup() {
     return { ImageType };
   },
-  data() {
+  data(): Data {
     return {
-      editState: {} as BaseItemPerson,
+      editState: {},
       options: [
         { text: this.$t('actor'), value: 'Actor' },
         { text: this.$t('composer'), value: 'Composer' },

@@ -79,6 +79,11 @@ import {
 import { getImageApi } from '@jellyfin/sdk/lib/utils/api/image-api';
 import { getImageInfo } from '@/utils/images';
 
+interface Data {
+  images: ImageInfo[];
+  dialog: boolean;
+}
+
 export default defineComponent({
   props: {
     metadata: {
@@ -86,14 +91,14 @@ export default defineComponent({
       default: (): BaseItemDto => ({})
     }
   },
-  data() {
+  data(): Data {
     return {
-      images: [] as ImageInfo[],
+      images: [],
       dialog: false
     };
   },
   computed: {
-    generalImages(): boolean {
+    generalImages(): ImageInfo[] {
       return this.images.filter((image) => {
         return (
           image.ImageType !== ImageType.Screenshot &&

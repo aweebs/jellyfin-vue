@@ -147,6 +147,13 @@ import { getBlurhash } from '@/utils/images';
 import { getItemDetailsLink } from '@/utils/items';
 import { useRemote } from '@/composables';
 
+interface Data {
+  backdropImageSource: '';
+  currentVideoTrack?: number;
+  currentAudioTrack?: number;
+  currentSubtitleTrack?: number;
+}
+
 export default defineComponent({
   async setup() {
     const { params } = useRoute();
@@ -162,12 +169,9 @@ export default defineComponent({
 
     return { item };
   },
-  data() {
+  data(): Data {
     return {
-      backdropImageSource: '',
-      currentVideoTrack: undefined as number | undefined,
-      currentAudioTrack: undefined as number | undefined,
-      currentSubtitleTrack: undefined as number | undefined
+      backdropImageSource: ''
     };
   },
   computed: {

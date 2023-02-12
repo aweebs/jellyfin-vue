@@ -55,22 +55,35 @@ import { getItemsApi } from '@jellyfin/sdk/lib/utils/api/items-api';
 import { debounce } from 'lodash-es';
 import { useResponsiveClasses } from '@/composables';
 
+interface Data {
+  loading: boolean;
+  searchTab: 0;
+  topSearchResults: BaseItemDto[];
+  movieSearchResults: BaseItemDto[];
+  showSearchResults: BaseItemDto[];
+  albumSearchResults: BaseItemDto[];
+  trackSearchResults: BaseItemDto[];
+  bookSearchResults: BaseItemDto[];
+  personSearchResults: BaseItemDto[];
+  artistSearchResults: BaseItemDto[];
+}
+
 export default defineComponent({
   setup() {
     return { useResponsiveClasses };
   },
-  data() {
+  data(): Data {
     return {
       loading: false,
       searchTab: 0,
-      topSearchResults: [] as BaseItemDto[],
-      movieSearchResults: [] as BaseItemDto[],
-      showSearchResults: [] as BaseItemDto[],
-      albumSearchResults: [] as BaseItemDto[],
-      trackSearchResults: [] as BaseItemDto[],
-      bookSearchResults: [] as BaseItemDto[],
-      personSearchResults: [] as BaseItemDto[],
-      artistSearchResults: [] as BaseItemDto[]
+      topSearchResults: [],
+      movieSearchResults: [],
+      showSearchResults: [],
+      albumSearchResults: [],
+      trackSearchResults: [],
+      bookSearchResults: [],
+      personSearchResults: [],
+      artistSearchResults: []
     };
   },
   computed: {
@@ -101,22 +114,23 @@ export default defineComponent({
     async performSearch(): Promise<void> {
       this.loading = true;
 
-      const itemResults = (
-        await this.$remote.sdk.newUserApi(getItemsApi).getItemsByUserId({
-          userId: this.$remote.auth.currentUserId || '',
-          searchTerm: this.searchQuery,
-          includeItemTypes: [
-            BaseItemKind.Movie,
-            BaseItemKind.Series,
-            BaseItemKind.Audio,
-            BaseItemKind.MusicAlbum,
-            BaseItemKind.Book,
-            BaseItemKind.MusicArtist,
-            BaseItemKind.Person
-          ],
-          recursive: true
-        })
-      ).data.Items;
+      const itemResults =
+        (
+          await this.$remote.sdk.newUserApi(getItemsApi).getItemsByUserId({
+            userId: this.$remote.auth.currentUserId || '',
+            searchTerm: this.searchQuery,
+            includeItemTypes: [
+              BaseItemKind.Movie,
+              BaseItemKind.Series,
+              BaseItemKind.Audio,
+              BaseItemKind.MusicAlbum,
+              BaseItemKind.Book,
+              BaseItemKind.MusicArtist,
+              BaseItemKind.Person
+            ],
+            recursive: true
+          })
+        ).data.Items ?? [];
 
       this.topSearchResults = itemResults.slice(0, 24);
 
@@ -140,12 +154,13 @@ export default defineComponent({
         (item: BaseItemDto) => item.Type === 'Book'
       );
 
-      this.personSearchResults = (
-        await this.$remote.sdk.newUserApi(getPersonsApi).getPersons({
-          userId: this.$remote.auth.currentUserId,
-          searchTerm: this.searchQuery
-        })
-      ).data.Items;
+      this.personSearchResults =
+        (
+          await this.$remote.sdk.newUserApi(getPersonsApi).getPersons({
+            userId: this.$remote.auth.currentUserId,
+            searchTerm: this.searchQuery
+          })
+        ).data.Items ?? [];
 
       this.artistSearchResults = itemResults.filter(
         (item: BaseItemDto) => item.Type === 'MusicArtist'

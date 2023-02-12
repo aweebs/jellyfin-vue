@@ -25,17 +25,24 @@ import { getStartupApi } from '@jellyfin/sdk/lib/utils/api/startup-api';
 import { getLocalizationApi } from '@jellyfin/sdk/lib/utils/api/localization-api';
 import { useSnackbar } from '@/composables';
 
+interface Data {
+  UICulture: string;
+  culturesList: LocalizationOption[];
+  initialConfig: StartupConfigurationDto;
+  loading: boolean;
+}
+
 export default defineComponent({
   setup() {
     return {
       useSnackbar
     };
   },
-  data() {
+  data(): Data {
     return {
       UICulture: 'en-US',
-      culturesList: [] as LocalizationOption[],
-      initialConfig: {} as StartupConfigurationDto,
+      culturesList: [],
+      initialConfig: {},
       loading: false
     };
   },

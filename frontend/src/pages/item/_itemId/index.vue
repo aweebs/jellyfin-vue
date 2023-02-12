@@ -246,6 +246,14 @@ import { getItemDetailsLink, getMediaStreams } from '@/utils/items';
 import { getItemizedSelect } from '@/utils/forms';
 import { useRemote } from '@/composables';
 
+interface Data {
+  backdropImageSource: string;
+  currentSource: MediaSourceInfo;
+  currentVideoTrack?: number;
+  currentAudioTrack?: number;
+  currentSubtitleTrack?: number;
+}
+
 export default defineComponent({
   async setup() {
     const { params } = useRoute();
@@ -260,13 +268,13 @@ export default defineComponent({
 
     return { item };
   },
-  data() {
+  data(): Data {
     return {
       backdropImageSource: '',
-      currentSource: {} as MediaSourceInfo,
-      currentVideoTrack: undefined as number | undefined,
-      currentAudioTrack: undefined as number | undefined,
-      currentSubtitleTrack: undefined as number | undefined
+      currentSource: {},
+      currentVideoTrack: undefined,
+      currentAudioTrack: undefined,
+      currentSubtitleTrack: undefined
     };
   },
   computed: {

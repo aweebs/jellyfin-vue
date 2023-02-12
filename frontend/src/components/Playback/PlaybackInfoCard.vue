@@ -225,17 +225,24 @@ import { camelCase, isNil } from 'lodash-es';
 import type shaka from 'shaka-player/dist/shaka-player.compiled';
 import { playbackManagerStore } from '@/store';
 
+interface Data {
+  updateSessionInterval?: number;
+  sessionInfo?: SessionInfo;
+  playerStats: shaka.extern.Stats;
+  videoDimensions: { width: number; height: number };
+}
+
 export default defineComponent({
   setup() {
     const playbackManager = playbackManagerStore();
 
     return { playbackManager };
   },
-  data() {
+  data(): Data {
     return {
-      updateSessionInterval: undefined as number | undefined,
-      sessionInfo: undefined as SessionInfo | undefined,
-      playerStats: {} as shaka.extern.Stats,
+      updateSessionInterval: undefined,
+      sessionInfo: undefined,
+      playerStats: undefined,
       videoDimensions: { width: 0, height: 0 }
     };
   },

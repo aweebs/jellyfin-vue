@@ -58,6 +58,11 @@ import { DeviceInfo } from '@jellyfin/sdk/lib/generated-client';
 import { getDevicesApi } from '@jellyfin/sdk/lib/utils/api/devices-api';
 import { useRemote, useSnackbar } from '@/composables';
 
+interface Data {
+  selectedDevice: DeviceInfo;
+  deviceInfoDialog: boolean;
+}
+
 export default defineComponent({
   async setup() {
     const remote = useRemote();
@@ -70,9 +75,9 @@ export default defineComponent({
       useSnackbar
     };
   },
-  data() {
+  data(): Data {
     return {
-      selectedDevice: {} as DeviceInfo,
+      selectedDevice: {},
       deviceInfoDialog: false
     };
   },

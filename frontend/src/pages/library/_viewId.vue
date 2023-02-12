@@ -58,43 +58,63 @@ import { getStudiosApi } from '@jellyfin/sdk/lib/utils/api/studios-api';
 import { validLibraryTypes } from '@/utils/items';
 import { useRemote, useSnackbar } from '@/composables';
 
+interface Data {
+  items: BaseItemDto[];
+  itemsCount: number;
+  loading: boolean;
+  viewType: string;
+  sortBy: string; //SortName;
+  hasFilters: boolean;
+  isDefaultView: boolean; // Movie view, not Collection. Music view, not Genres...
+  statusFilter: string[];
+  genresFilter: string[];
+  yearsFilter: string[];
+  ratingsFilter: string[];
+  filterHasSubtitles: boolean;
+  filterHasTrailer: boolean;
+  filterHasSpecialFeature: boolean;
+  filterHasThemeSong: boolean;
+  filterHasThemeVideo: boolean;
+  filterIsHd?: boolean;
+  filterIs4k?: boolean;
+  filterIs3d?: boolean;
+}
+
 export default defineComponent({
   async setup() {
     const { params } = useRoute();
     const remote = useRemote();
-    const collectionInfo = (
-      await remote.sdk.newUserApi(getItemsApi).getItems({
-        userId: remote.auth.currentUserId,
-        ids: [params.viewId]
-      })
-    ).data?.Items?.[0];
+    const collectionInfo =
+      (
+        await remote.sdk.newUserApi(getItemsApi).getItems({
+          userId: remote.auth.currentUserId,
+          ids: [params.viewId]
+        })
+      ).data?.Items?.[0] ?? {};
 
     return {
       useSnackbar,
       collectionInfo
     };
   },
-  data() {
+  data(): Data {
     return {
-      items: [] as BaseItemDto[],
+      items: [],
       itemsCount: 0,
       loading: false,
       viewType: '',
       sortBy: 'SortName',
       hasFilters: false,
       isDefaultView: true, // Movie view, not Collection. Music view, not Genres...
-      statusFilter: [] as string[],
-      genresFilter: [] as string[],
-      yearsFilter: [] as string[],
-      ratingsFilter: [] as string[],
+      statusFilter: [],
+      genresFilter: [],
+      yearsFilter: [],
+      ratingsFilter: [],
       filterHasSubtitles: false,
       filterHasTrailer: false,
       filterHasSpecialFeature: false,
       filterHasThemeSong: false,
-      filterHasThemeVideo: false,
-      filterIsHd: undefined as boolean | undefined,
-      filterIs4k: undefined as boolean | undefined,
-      filterIs3d: undefined as boolean | undefined
+      filterHasThemeVideo: false
     };
   },
   computed: {
@@ -103,8 +123,8 @@ export default defineComponent({
     },
     hasViewTypes(): boolean {
       return !(
-        ['homevideos'].includes(this.collectionInfo.CollectionType || '') ||
-        this.collectionInfo.CollectionType === undefined
+        ['homevideos'].includes(this.collectionInfo?.CollectionType || '') ||
+        this.collectionInfo?.CollectionType === undefined
       );
     },
     isSortable(): boolean {
@@ -295,8 +315,8 @@ export default defineComponent({
           }
         }
 
-        this.items = itemsResponse.Items;
-        this.itemsCount = itemsResponse.TotalRecordCount;
+        this.items = itemsResponse.Items ?? [];
+        this.itemsCount = itemsResponse.TotalRecordCount ?? 0;
       } catch {
         this.items = [];
         this.itemsCount = 0;

@@ -138,7 +138,12 @@ import { useDateFns, useRemote } from '@/composables';
 
 interface LoadingStatus {
   status: 'loading' | 'loaded' | 'error';
-  errorMessage: string;
+  errorMessage?: string;
+}
+
+interface Data {
+  loadingLogsStatus: LoadingStatus;
+  loadingActivityStatus: LoadingStatus;
 }
 
 export default defineComponent({
@@ -163,10 +168,10 @@ export default defineComponent({
 
     return { activityList, logFiles };
   },
-  data() {
+  data(): Data {
     return {
-      loadingLogsStatus: { status: 'error' } as LoadingStatus,
-      loadingActivityStatus: { status: 'error' } as LoadingStatus
+      loadingLogsStatus: { status: 'error' },
+      loadingActivityStatus: { status: 'error' }
     };
   },
   methods: {

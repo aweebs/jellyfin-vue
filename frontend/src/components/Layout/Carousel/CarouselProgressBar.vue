@@ -24,6 +24,10 @@
 import { defineComponent } from 'vue';
 import { useResponsiveClasses } from '@/composables';
 
+interface Data {
+  bars: HTMLElement[];
+}
+
 export default defineComponent({
   props: {
     pages: {
@@ -52,9 +56,9 @@ export default defineComponent({
   setup() {
     return { useResponsiveClasses };
   },
-  data() {
+  data(): Data {
     return {
-      bars: [] as HTMLElement[]
+      bars: []
     };
   },
   computed: {

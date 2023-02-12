@@ -207,6 +207,17 @@ import { getItemUpdateApi } from '@jellyfin/sdk/lib/utils/api/item-update-api';
 import { format, formatISO } from 'date-fns';
 import { useDateFns, useSnackbar } from '@/composables';
 
+interface Data {
+  metadata: BaseItemDto;
+  menu: boolean;
+  dialog: boolean;
+  person?: BaseItemPerson;
+  genres: string[];
+  search: string;
+  loading: boolean;
+  tabName?: string;
+}
+
 export default defineComponent({
   props: {
     itemId: {
@@ -224,16 +235,16 @@ export default defineComponent({
       ImageType
     };
   },
-  data() {
+  data(): Data {
     return {
-      metadata: {} as BaseItemDto,
+      metadata: {},
       menu: false,
       dialog: false,
-      person: null as BaseItemPerson | null,
-      genders: [] as BaseItemDto[] | null | undefined,
+      person: undefined,
+      genres: [],
       search: '',
       loading: false,
-      tabName: null
+      tabName: undefined
     };
   },
   computed: {
@@ -276,14 +287,23 @@ export default defineComponent({
     async getData(): Promise<void> {
       await this.fetchItemInfo();
 
+      if (!this.metadata.Id) {
+        return;
+      }
+
       const ancestors = await this.$remote.sdk
         .newUserApi(getLibraryApi)
         .getAncestors({
-          itemId: this.metadata.Id as string,
+          itemId: this.metadata.Id,
           userId: this.$remote.auth.currentUserId
         });
-      const libraryInfo =
-        ancestors.data.find((index) => index.Type === 'CollectionFolder') || {};
+      const libraryInfo = ancestors.data.find(
+        (index) => index.Type === 'CollectionFolder'
+      );
+
+      if (!libraryInfo || !libraryInfo.Id) {
+        return;
+      }
 
       this.getGenres(libraryInfo.Id);
     },
@@ -297,12 +317,15 @@ export default defineComponent({
 
       this.$data.metadata = itemInfo;
     },
-    async getGenres(parentId = ''): Promise<void> {
-      this.genders = (
-        await this.$remote.sdk.newUserApi(getGenresApi).getGenres({
-          parentId
-        })
-      ).data.Items?.map((index) => index.Name) as BaseItemDto[];
+    async getGenres(parentId: string): Promise<void> {
+      this.genres =
+        (
+          await this.$remote.sdk.newUserApi(getGenresApi).getGenres({
+            parentId
+          })
+        ).data.Items?.map((index) => index.Name).filter(
+          (genre): genre is string => !!genre
+        ) ?? [];
     },
     async saveMetadata(): Promise<void> {
       const item = pick(this.metadata, [
@@ -347,8 +370,13 @@ export default defineComponent({
 
       try {
         this.loading = true;
+
+        if (!this.metadata.Id) {
+          throw new Error('Expected metadata to have id');
+        }
+
         await this.$remote.sdk.newUserApi(getItemUpdateApi).updateItem({
-          itemId: this.metadata.Id as string,
+          itemId: this.metadata.Id,
           baseItemDto: item
         });
         this.$emit('save');
@@ -396,7 +424,7 @@ export default defineComponent({
       this.dialog = result;
     },
     handlePersonDel(index: number): void {
-      (this.metadata.People as BaseItemPerson[]).splice(index, 1);
+      (this.metadata.People ?? []).splice(index, 1);
     }
   }
 });

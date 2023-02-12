@@ -43,19 +43,28 @@ import { getLocalizationApi } from '@jellyfin/sdk/lib/utils/api/localization-api
 import { getStartupApi } from '@jellyfin/sdk/lib/utils/api/startup-api';
 import { useSnackbar } from '@/composables';
 
+interface Data {
+  metadataLanguage: string;
+  metadataCountry: string;
+  initialConfig: StartupConfigurationDto;
+  cultureOptions: CultureDto[];
+  countryOptions: CountryInfo[];
+  loading: boolean;
+}
+
 export default defineComponent({
   setup() {
     return {
       useSnackbar
     };
   },
-  data() {
+  data(): Data {
     return {
       metadataLanguage: '',
       metadataCountry: '',
-      initialConfig: {} as StartupConfigurationDto,
-      cultureOptions: [] as CultureDto[],
-      countryOptions: [] as CountryInfo[],
+      initialConfig: {},
+      cultureOptions: [],
+      countryOptions: [],
       loading: false
     };
   },

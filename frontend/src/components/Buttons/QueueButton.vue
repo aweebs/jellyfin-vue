@@ -106,6 +106,12 @@ import { playbackManagerStore } from '@/store';
 import { InitMode } from '@/store/playbackManager';
 import { getTotalEndsAtTime } from '@/utils/time';
 
+interface Data {
+  menu: boolean;
+  destroy: boolean;
+  timeout?: number;
+}
+
 export default defineComponent({
   props: {
     nudgeTop: {
@@ -122,11 +128,10 @@ export default defineComponent({
 
     return { playbackManager };
   },
-  data() {
+  data(): Data {
     return {
       menu: false,
-      destroy: false,
-      timeout: undefined as undefined | number
+      destroy: false
     };
   },
   computed: {
